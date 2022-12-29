@@ -1,0 +1,112 @@
+<html>
+<head>
+<title>classemp.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+classemp.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">pyodbc</span>
+<span class="s0">import </span><span class="s1">empschema</span>
+
+<span class="s1">server = </span><span class="s2">'HCL-02-NEW-15\SQLEXPRESS'</span>
+<span class="s1">database = </span><span class="s2">'filesearchresult4'</span>
+<span class="s1">username = </span><span class="s2">'capstone'</span>
+<span class="s1">password = </span><span class="s2">'Capstone@123'</span>
+<span class="s1">cnxn = pyodbc.connect(</span>
+        <span class="s2">'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' </span><span class="s1">+ server + </span><span class="s2">';DATABASE=' </span><span class="s1">+ database + </span><span class="s2">';UID=' </span><span class="s1">+ username + </span><span class="s2">';PWD=' </span><span class="s1">+ password)</span>
+<span class="s1">cursor = cnxn.cursor()</span>
+<span class="s0">class </span><span class="s1">Existing(Exception):</span>
+    <span class="s0">pass</span>
+
+<span class="s0">class </span><span class="s1">Employeeid:</span>
+        <span class="s1">Bonus=</span><span class="s3">2</span>
+        <span class="s1">Project=[</span><span class="s2">'python'</span><span class="s0">,</span><span class="s2">'c'</span><span class="s0">,</span><span class="s2">'java'</span><span class="s1">]</span>
+        <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">nameofemployee</span><span class="s0">,</span><span class="s1">salary</span><span class="s0">,</span><span class="s1">project):</span>
+            <span class="s1">self.nameofemployee=nameofemployee</span>
+            <span class="s1">self.salary=salary</span>
+            <span class="s1">self.project=project</span>
+        <span class="s0">def </span><span class="s1">display_employee(self):</span>
+            <span class="s1">query = </span><span class="s2">'''  
+                    INSERT INTO employee_table (nameofemployee, salary, project) 
+                    VALUES 
+                    ('{0}',{1},'{2}')  '''</span>
+            <span class="s1">insertQuery = query.format(self.nameofemployee</span><span class="s0">,</span><span class="s1">self.salary</span><span class="s0">,</span><span class="s1">self.project)</span>
+
+            <span class="s1">print(insertQuery)</span>
+            <span class="s1">cursor.execute(insertQuery)</span>
+            <span class="s1">query5=cursor.execute(</span><span class="s2">'''select *from employee_table'''</span><span class="s1">)</span>
+            <span class="s1">cnxn.commit()</span>
+
+        <span class="s0">def </span><span class="s1">update_salary(self</span><span class="s0">,</span><span class="s1">update_salary</span><span class="s0">,</span><span class="s1">nameofemployee):</span>
+            <span class="s0">try</span><span class="s1">:</span>
+                <span class="s1">self.update_salary=update_salary</span>
+                <span class="s1">self.nameofemployee=nameofemployee</span>
+                <span class="s0">if </span><span class="s1">self.update_salary!=self.salary:</span>
+                    <span class="s1">query6 = </span><span class="s2">''' 
+                        update employee_table SET salary='{0}' WHERE nameofemployee='{1}' 
+                        '''</span>
+                    <span class="s1">update_query6 =query6.format(self.update_salary</span><span class="s0">,</span><span class="s1">self.nameofemployee)</span>
+                    <span class="s1">cursor.execute(update_query6)</span>
+                    <span class="s1">cursor.commit()</span>
+                <span class="s0">else</span><span class="s1">:</span>
+                    <span class="s0">raise </span><span class="s1">Existing</span>
+            <span class="s0">except </span><span class="s1">Existing:</span>
+                <span class="s1">print(</span><span class="s2">&quot;no change in your salary&quot;</span><span class="s1">)</span>
+        <span class="s0">def </span><span class="s1">change_project(self</span><span class="s0">,</span><span class="s1">project</span><span class="s0">,</span><span class="s1">nameofemployee):</span>
+            <span class="s1">self.project=project</span>
+            <span class="s1">self.nameofemployee=nameofemployee</span>
+            <span class="s0">if </span><span class="s1">self.project </span><span class="s0">in </span><span class="s1">self.Project:</span>
+                <span class="s0">if </span><span class="s1">self.project==self.Project:</span>
+                    <span class="s1">print(</span><span class="s2">&quot;project already exists &quot;</span><span class="s1">)</span>
+                <span class="s0">else</span><span class="s1">:</span>
+                    <span class="s1">query8=</span><span class="s2">''' 
+                           update employee_table SET Project='{0}' WHERE nameofemployee='{1}' 
+                    '''</span>
+            <span class="s0">else</span><span class="s1">:</span>
+                <span class="s1">print(</span><span class="s2">&quot;project is not in the list&quot;</span><span class="s1">)</span>
+        <span class="s0">def </span><span class="s1">Add_bonus(self</span><span class="s0">,</span><span class="s1">bonus</span><span class="s0">,</span><span class="s1">nameofemployee):</span>
+            <span class="s1">self.bonus=bonus</span>
+            <span class="s1">self.nameofemployee=nameofemployee</span>
+            <span class="s0">if </span><span class="s1">self.bonus==self.Bonus:</span>
+                <span class="s1">self.salary=self.salary+self.salary*self.bonus</span>
+                <span class="s1">query9=</span><span class="s2">''' 
+               update employee_table SET Bonus='{0}' WHERE nameofemployee='{1}' #     '''</span>
+                <span class="s1">change_query9=query9.formate(self.salary</span><span class="s0">,</span><span class="s1">self.nameofemployee)</span>
+                <span class="s1">cursor.execute(change_query9)</span>
+                <span class="s1">cursor.commit()</span>
+            <span class="s0">else</span><span class="s1">:</span>
+                <span class="s1">self.salary=self.salary+self.salary*self.Bonus</span>
+                <span class="s1">query12=</span><span class="s2">''' 
+                update employee_table SET Bonus='{0}' WHERE nameofemployee='{1}' 
+                '''</span>
+                <span class="s1">change_query12 = query12.formate(self.salary</span><span class="s0">, </span><span class="s1">self.nameofemployee)</span>
+                <span class="s1">cursor.execute(change_query12)</span>
+                <span class="s1">cursor.commit()</span>
+
+<span class="s1">obj=Employeeid(</span><span class="s2">'sujitha'</span><span class="s0">,</span><span class="s3">30000</span><span class="s0">,</span><span class="s2">'c'</span><span class="s1">)</span>
+<span class="s1">ob1=empschema.Employee_schema()</span>
+<span class="s1">ob1.Employee()</span>
+<span class="s1">obj.display_employee()</span>
+<span class="s1">obj.update_salary(</span><span class="s3">35000</span><span class="s0">,</span><span class="s2">'sujitha'</span><span class="s1">)</span>
+<span class="s1">obj.change_project(</span><span class="s2">'python'</span><span class="s0">,</span><span class="s2">'sujitha'</span><span class="s1">)</span>
+<span class="s1">obj.Add_bonus(</span><span class="s3">2</span><span class="s0">,</span><span class="s2">'sujitha'</span><span class="s1">)</span>
+
+
+
+
+
+
+
+</pre>
+</body>
+</html>
